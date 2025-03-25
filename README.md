@@ -1,3 +1,13 @@
+Develop a Computer Vision Solution for Face Mask Classification and Segmentation
+
+**Project Overview**:
+The goal of this project is to build a computer vision solution for classifying and segmenting face masks in images. This will involve a combination of handcrafted features with machine learning classifiers and deep learning techniques for both classification and segmentation tasks.
+
+**Datasets**:
+1. **Face Mask Detection Dataset**: This labeled dataset contains images of people with and without face masks. It can be accessed from the following repository: [Face Mask Detection Dataset](https://github.com/chandrikadeb7/Face-Mask-Detection/tree/master/dataset).
+  
+2. **Masked Face Segmentation Dataset**: This dataset contains images of faces with ground truth face masks for segmentation tasks. The dataset can be accessed from: [Masked Face Segmentation Dataset](https://github.com/sadjadrz/MFSD).
+
 ## Setting up the dataset
 ---------------------------------------------
 
@@ -199,6 +209,15 @@ The consolidated results of all the experiments are as:
 | LR    | 0.878691  | 0.774359 | 95              | 81              | 0.77     |
 | RF    | 1.000000  | 0.778205 | 117             | 56              | 0.78     |
 
+**Conclusion**
+- **SVM with Gabor features** achieved the highest performance with a test accuracy of **86.41%** and an F1-score of **0.86**.
+- **MLP with updated parameters** also performed well, with a test accuracy of **81.67%** and an F1-score of **0.82**.
+- **Normalization of features** slightly improved the results for SVM (test accuracy: **83.72%**, F1-score: **0.84**) and MLP (test accuracy: **83.46%**, F1-score: **0.83**).
+- Increasing the image size from **64x64 to 96x96** did not significantly improve performance and in some cases, like for SVM, it led to a decrease in test accuracy (**81.24%**), indicating that the larger image size might add unnecessary complexity.
+- **Logistic Regression** and **Random Forests** performed the worst, with test accuracies of **76.28%** and **77.87%**, respectively, highlighting their lower effectiveness in this task compared to SVM and MLP. 
+
+Overall, the combination of **SVM with Gabor features** and **MLP with proper tuning** delivered the best results for face mask classification and segmentation.
+
 ---
 ## Task B
 
@@ -215,36 +234,34 @@ We use the following CNN architecture:
 ```
 CNN(
   (conv1): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-  
   (conv2): Conv2d(16, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-  
   (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-  
   (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-  
   (flatten): Flatten(start_dim=1, end_dim=-1)
-  
   (fc1): Linear(in_features=2048, out_features=128, bias=True)
-  
   (fc2): Linear(in_features=128, out_features=1, bias=True)
-  
   (relu): ReLU()
   (sigmoid): Sigmoid()
 )
 ```
 
-The model was trained on mentioned dataset for `10` epochs. The training loss for it is as:
+The model was trained on mentioned dataset for `15` epochs. Binary Cross Entropy (BCELoss) is used as the loss function. Adam optimizer is used with a learning rate of 0.001.The training loss for it is as:
 ```
-Epoch: 1  | Train Loss: 0.41242   
-Epoch: 2  | Train Loss: 0.28134   
-Epoch: 3  | Train Loss: 0.22790   
-Epoch: 4  | Train Loss: 0.19681   
-Epoch: 5  | Train Loss: 0.17420   
-Epoch: 6  | Train Loss: 0.16097   
-Epoch: 7  | Train Loss: 0.12542   
-Epoch: 8  | Train Loss: 0.11236   
-Epoch: 9  | Train Loss: 0.10507   
-Epoch: 10 | Train Loss: 0.09338   
+Epoch: 1  | Train Loss: 0.49768   
+Epoch: 2  | Train Loss: 0.28832   
+Epoch: 3  | Train Loss: 0.24126   
+Epoch: 4  | Train Loss: 0.20209   
+Epoch: 5  | Train Loss: 0.19256   
+Epoch: 6  | Train Loss: 0.15997   
+Epoch: 7  | Train Loss: 0.14257   
+Epoch: 8  | Train Loss: 0.12698   
+Epoch: 9  | Train Loss: 0.11578   
+Epoch: 10 | Train Loss: 0.10098   
+Epoch: 11 | Train Loss: 0.08440   
+Epoch: 12 | Train Loss: 0.08050   
+Epoch: 13 | Train Loss: 0.06951   
+Epoch: 14 | Train Loss: 0.05980   
+Epoch: 15 | Train Loss: 0.05703 
 ```
 
 The graph of the same is as:
@@ -253,37 +270,53 @@ The graph of the same is as:
 
 Accuracy and other related metrics obtained were as:
 ```
-Train Accuracy : 96.61%
+Train Accuracy : 97.62%
 Test Accuracy : 95.24% 
-AUC : 0.9510 
-F1-Score : 0.9471
-```
-
-Confusion matrix plotted was as:
-```
+AUC : 0.9537 
+F1-Score : 0.9513
 Confusion Matrix:
-[[431  15]
- [ 24 349]]
-```
+[[399  31]
+ [  8 381]]
+ ```
 
 Experiments ran on the CNN yeilded the following results:
-|    | learning_rate | optimizer | train_accuracy | test_accuracy |        auc         |      f1_score      | epochs |
-|----|----------------|-----------|----------------|----------------|--------------------|--------------------|--------|
-| 0  |     0.001      |   adam    |     96.61      |     95.24      |       0.951        |       0.9471       |   10   |
-| 1  |     0.01       |   adam    |     90.78      |     91.21      | 0.9162108224431648 | 0.9088607594936708 |   10   |
-| 2  |     0.01       |   adam    |      98.5      |     94.26      | 0.9429212902295051 | 0.9375830013280213 |   15   |
-| 3  |     0.01       |   adam    |      98.6      |     94.26      | 0.9429212902295051 | 0.9375830013280213 |   20   |
-| 4  |     0.01       |    sgd    |     91.85      |     89.5       | 0.8974440664109933 | 0.8891752577319587 |   10   |
-| 5  |     0.01       |    sgd    |     96.03      |     93.41      | 0.9352931629377608 | 0.9291338582677166 |   15   |
-| 6  |     0.01       |    sgd    |     98.08      |     93.53      | 0.9342201757655176 | 0.9284750337381916 |   20   |
-| 7  |     0.02       |   adam    |     52.46      |     54.46      |        0.5         |        0.0         |   10   |
-| 8  |     0.02       |   adam    |     93.65      |     91.58      | 0.9182576130994603 | 0.9109677419354839 |   15   |
-| 9  |     0.02       |   adam    |      92.7      |     88.4       |  0.88910963103668  | 0.8813982521847691 |   20   |
-| 10 |     0.02       |    sgd    |     52.46      |     54.46      |        0.5         |        0.0         |   10   |
-| 11 |     0.02       |    sgd    |     52.46      |     54.46      |        0.5         |        0.0         |   15   |
-| 12 |     0.02       |    sgd    |     52.46      |     54.46      |        0.5         |        0.0         |   20   |
+
+| Experiment | Learning Rate | Epochs | Optimizer | Train Accuracy | Test Accuracy | AUC Score | F1 Score | Confusion Matrix       |
+|------------|---------------|--------|-----------|-----------------|----------------|-----------|----------|------------------------|
+| 1          | 0.001         | 15     | adam      | 97.62%          | 95.24%         | 0.9537    | 0.9513   | [[399, 31], [8, 381]]  |
+| 2          | 0.001         | 20     | adam      | 99.63%          | 95.85%         | 0.9583    | 0.9562   | [[414, 16], [18, 371]] |
+| 3          | 0.001         | 10     | adam      | 97.62%          | 95.85%         | 0.9583    | 0.9562   | [[414, 16], [18, 371]] |
+| 4          | 0.001         | 17     | adam      | 99.33%          | 95.12%         | 0.9514    | 0.9490   | [[407, 23], [17, 372]] |
+| 5          | 0.002         | 15     | adam      | 98.75%          | 94.26%         | 0.9433    | 0.9406   | [[400, 30], [17, 372]] |
+| 6          | 0.01          | 15     | adam      | 98.78%          | 94.38%         | 0.9438    | 0.9410   | [[406, 24], [22, 367]] |
+| 7          | 0.01          | 20     | sgd       | 97.83%          | 94.38%         | 0.9431    | 0.9401   | [[412, 18], [28, 361]] |
+| 8          | 0.02          | 20     | sgd       | 99.27%          | 94.02%         | 0.9412    | 0.9385   | [[396, 34], [15, 374]] |
+
+```
+The Model with Highest Test Accuracy:
+==================================================
+learning_rate: 0.001
+epochs: 10
+optimizer: adam
+train_accuracy: 97.62
+test_accuracy: 95.85
+auc: 0.9582591020505768
+f1_score: 0.9561855670103093
+confusion Matrix:
+[[414  16]
+ [ 18 371]]
+==================================================
+Test and Train Accuracy is in %
+```
 
 The graphs of losses in the experiments can be found in the respective jupyter notebook. 
+
+**Conclusion**
+
+The highest test accuracy for SVM is 86.41%, whereas for CNN, it is 95.85%.
+The highest F1-Score for SVM is 0.86 , whereas for CNN, it is 0.9561.
+The Comparision is done for same SVM and CNN Model in the above both statements.
+
 ---
 
 ## Task C
@@ -315,6 +348,15 @@ IOU score: 0.8287 | Dice score: 0.9063
 
 More images can be found in the project's jupyter notebook.
 
+**Conclusion**
+
+Average IOU and DICE scores across full dataset were _0.355_ and _0.464_ respectively. However, they have a large standard deviation of _0.27_ and _0.30_.
+
+As seen from the examples, this is because some masks with clear HSV colour separation are classified quite accurately (~0.9 dice score), while other masks with complex patterns or shadows have very low accuracy (~0.1 dice score).
+
+This technique can be quite reliable for certain images, but is not optimal for the large variety in the dataset. Hence, segmentation for this dataset could benefit from a deep learning approach
+
+
 ---
 
 ## Task D
@@ -324,3 +366,46 @@ i. Train a U-Net model for precise segmentation of mask regions in the images.
 ii. Compare the performance of U-Net with the traditional segmentation method
 using metrics like IoU or Dice score.
 ```
+The Unet model used herein consists of 2 pairs of layers (2 up, 2 down), plus a bottleneck layer. Hyper parameters were chosen to improve performance for the model, which is otherwise relatively small. The smaller model allows for improved training times.
+```
+Activation fn: Leaky ReLU 
+
+Optimizer: Adam
+
+Scheduler: LR scheduler
+
+Train Size: 1876, Test Size: 7507
+```
+
+The architecture of Unet can be summarized as:
+```
+U-Net(
+  (encoder1): Sequential(Conv2d(3, 32), BatchNorm2d(32), LeakyReLU, Conv2d(32, 32), BatchNorm2d(32), LeakyReLU)
+  (pool1): MaxPool2d(2)
+  (encoder2): Sequential(Conv2d(32, 64), BatchNorm2d(64), LeakyReLU, Conv2d(64, 64), BatchNorm2d(64), LeakyReLU)
+  (pool2): MaxPool2d(2)
+  (bottleneck): Sequential(Conv2d(64, 128), BatchNorm2d(128), LeakyReLU, Conv2d(128, 128), BatchNorm2d(128), LeakyReLU)
+  (upconv1): ConvTranspose2d(128, 64, kernel_size=2, stride=2)
+  (decoder1): Sequential(Conv2d(128, 64), BatchNorm2d(64), LeakyReLU, Conv2d(64, 64), BatchNorm2d(64), LeakyReLU)
+  (upconv2): ConvTranspose2d(64, 32, kernel_size=2, stride=2)
+  (decoder2): Sequential(Conv2d(64, 32), BatchNorm2d(32), LeakyReLU, Conv2d(32, 32), BatchNorm2d(32), LeakyReLU)
+  (final_conv): Conv2d(32, 1)
+)
+```
+
+Finally `10` epochs were trained. The results if not perfect, were adequate for the model. Example output is as:
+![unet1](images/unet.png)
+`IOU:0.9263217097862767, DICE: 0.9617518248175182`
+
+![unet1](images/unet-1.png)
+`IOU:0.8782837127845884, DICE: 0.9351981351981352`
+
+More image examples can be found in the attached jupyter notebook.
+
+**Conclusion**
+
+Average IOU and DICE scores across test set were _0.870_ and _0.923_ respectively. The standard deviation remained quite small at _0.132_ and _0.097_.
+
+A simple UNet model with 5 layers was able to classify identify the mask regions quite accurately, with a good degree of reliability across all images.
+
+This task highlights the effectiveness of UNet model for image segmentation tasks.
